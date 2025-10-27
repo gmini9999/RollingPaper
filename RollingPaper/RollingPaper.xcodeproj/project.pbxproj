@@ -7,13 +7,13 @@
 	objects = {
 
 /* Begin PBXFileReference section */
-		A11BD8792EAE8B22003AA21C /* RollingPaper.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = RollingPaper.app; path = "/Users/gmini/_project/RollingPaper/RollingPaper/build/Debug-iphoneos/RollingPaper.app"; sourceTree = "<absolute>"; };
+		A1FB9D812EAF01410015AC9B /* RollingPaper.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RollingPaper.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		A11BDBE02EAE9E59003AA21C /* RollingPaper */ = {
+		A11BDBE02EAE9E59003AA21C /* Sources */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = RollingPaper;
+			path = Sources;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -32,7 +32,8 @@
 		A11BD0BF2EAE2B14003AA21C = {
 			isa = PBXGroup;
 			children = (
-				A11BDBE02EAE9E59003AA21C /* RollingPaper */,
+				A11BDBE02EAE9E59003AA21C /* Sources */,
+				A1FB9D812EAF01410015AC9B /* RollingPaper.app */,
 			);
 			sourceTree = "<group>";
 		};
@@ -52,13 +53,13 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				A11BDBE02EAE9E59003AA21C /* RollingPaper */,
+				A11BDBE02EAE9E59003AA21C /* Sources */,
 			);
 			name = RollingPaper;
 			packageProductDependencies = (
 			);
 			productName = RollingPaper;
-			productReference = A11BD8792EAE8B22003AA21C /* RollingPaper.app */;
+			productReference = A1FB9D812EAF01410015AC9B /* RollingPaper.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
