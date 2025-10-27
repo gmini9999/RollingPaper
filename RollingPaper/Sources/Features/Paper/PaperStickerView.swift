@@ -25,6 +25,10 @@ struct PaperStickerView: View {
                 photoSticker(content)
             case .doodle(let content):
                 doodleSticker(content)
+            case .voice(let content):
+                voiceSticker(content)
+            case .video(let content):
+                videoSticker(content)
             }
         }
     }
@@ -37,6 +41,10 @@ struct PaperStickerView: View {
             return 32
         case .doodle:
             return 0
+        case .voice:
+            return 20
+        case .video:
+            return 24
         }
     }
 
@@ -89,7 +97,7 @@ struct PaperStickerView: View {
 
     private func doodleSticker(_ content: PaperStickerDoodleContent) -> some View {
         Group {
-            if let image = UIImage(named: content.pathAssetName) {
+            if let image = UIImage(named: content.pathAssetName ?? "") {
                 Image(uiImage: image)
                     .renderingMode(.template)
                     .resizable()
@@ -103,6 +111,77 @@ struct PaperStickerView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding(12)
+    }
+
+    private func voiceSticker(_ content: PaperStickerVoiceContent) -> some View {
+        VStack(spacing: 12) {
+            // 오디오 아이콘
+            Image(systemName: "waveform.circle.fill")
+                .font(.system(size: 32, weight: .semibold))
+                .foregroundStyle(Color.rpAccent)
+            
+            // 제목 또는 기본 텍스트
+            if let title = content.title {
+                Text(title)
+                    .font(.system(size: 13, weight: .medium))
+                    .lineLimit(1)
+                    .foregroundStyle(Color.rpTextPrimary)
+            }
+            
+            // 재생 시간
+            Text(content.formattedDuration)
+                .font(.system(size: 11, weight: .regular))
+                .foregroundStyle(Color.rpTextSecondary)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .padding(16)
+        .background(Color.rpSurfaceAlt)
+        .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
+        .shadow(color: Color.black.opacity(0.06), radius: 12, x: 0, y: 8)
+    }
+
+    private func videoSticker(_ content: PaperStickerVideoContent) -> some View {
+        ZStack(alignment: .center) {
+            // 썸네일 또는 배경
+            if let thumbnailURL = content.thumbnailURL,
+               let data = try? Data(contentsOf: thumbnailURL),
+               let uiImage = UIImage(data: data) {
+                Image(uiImage: uiImage)
+                    .resizable()
+                    .scaledToFill()
+            } else {
+                LinearGradient(
+                    colors: [Color.rpPrimary.opacity(0.3), Color.rpAccent.opacity(0.3)],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+            }
+            
+            // 재생 버튼 오버레이
+            VStack(spacing: 8) {
+                Image(systemName: "play.circle.fill")
+                    .font(.system(size: 48, weight: .semibold))
+                    .foregroundStyle(Color.white)
+                    .shadow(color: Color.black.opacity(0.3), radius: 6, x: 0, y: 2)
+                
+                // 재생 시간
+                Text(content.formattedDuration)
+                    .font(.rpCaption)
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(Color.black.opacity(0.4))
+                    .clipShape(Capsule())
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color.rpSurface)
+        .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                .stroke(Color.white.opacity(0.5), lineWidth: 1)
+        )
+        .shadow(color: Color.black.opacity(0.08), radius: 16, x: 0, y: 12)
     }
 
     private func font(for style: PaperStickerTextContent.Style) -> Font {

@@ -17,6 +17,13 @@ struct PaperView: View {
     @State private var editingMagnificationLast: CGFloat = 1
     @State private var editingRotationLast: Angle = .zero
     @State private var isPressingToExit = false
+    
+    // Sheet 표시 상태
+    @State private var showPaperInfo = false
+    @State private var showTextInputSheet = false
+    @State private var showDrawingInputSheet = false
+    @State private var showAudioRecordingSheet = false
+    @State private var showMediaPickerSheet = false
 
     var body: some View {
         let canvasBounds = CGRect(
@@ -134,6 +141,43 @@ struct PaperView: View {
         .background(Color.clear)
         .navigationTitle(editorTitle)
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                HStack(spacing: 12) {
+                    // Settings Button
+                    Button(action: { showPaperInfo = true }) {
+                        Image(systemName: "gear")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundColor(.rpTextPrimary)
+                    }
+                    .accessibilityLabel("종이 정보")
+                    .accessibilityHint("종이 정보 및 공유 설정을 표시합니다")
+                    
+                    // Add Menu (Dropdown)
+                    Menu {
+                        Button(action: { showTextInputSheet = true }) {
+                            Label("텍스트", systemImage: "text.bubble")
+                        }
+                        Button(action: { showDrawingInputSheet = true }) {
+                            Label("그리기", systemImage: "pencil")
+                        }
+                        Button(action: { showAudioRecordingSheet = true }) {
+                            Label("오디오", systemImage: "mic.fill")
+                        }
+                        Button(action: { showMediaPickerSheet = true }) {
+                            Label("사진, 동영상", systemImage: "photo.stack")
+                        }
+                    } label: {
+                        Image(systemName: "plus.circle.fill")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundColor(.rpAccent)
+                    }
+                    .accessibilityLabel("콘텐츠 추가")
+                    .accessibilityHint("텍스트, 그리기, 오디오, 사진 또는 동영상을 추가합니다")
+                }
+                .padding(.horizontal, .rpSpaceM)
+            }
+        }
         .environmentObject(gestureManager)
         .onAppear {
             gestureManager.prepareHapticEngine()
@@ -151,6 +195,43 @@ struct PaperView: View {
                 canvasStore.endEditing()
                 canvasStore.clearSelection()
                 resetEditingGestureState()
+            }
+        }
+        // Sheet 통합
+        .sheet(isPresented: $showTextInputSheet) {
+            TextInputSheet { stickerKind in
+                canvasStore.addSticker(stickerKind)
+                showTextInputSheet = false
+                feedbackCenter.trigger(haptic: .notification(type: .success),
+                                     animation: .spring,
+                                     reduceMotion: reduceMotion)
+            }
+        }
+        .sheet(isPresented: $showDrawingInputSheet) {
+            DrawingInputSheet { stickerKind in
+                canvasStore.addSticker(stickerKind)
+                showDrawingInputSheet = false
+                feedbackCenter.trigger(haptic: .notification(type: .success),
+                                     animation: .spring,
+                                     reduceMotion: reduceMotion)
+            }
+        }
+        .sheet(isPresented: $showAudioRecordingSheet) {
+            AudioRecordingSheet { stickerKind in
+                canvasStore.addSticker(stickerKind)
+                showAudioRecordingSheet = false
+                feedbackCenter.trigger(haptic: .notification(type: .success),
+                                     animation: .spring,
+                                     reduceMotion: reduceMotion)
+            }
+        }
+        .sheet(isPresented: $showMediaPickerSheet) {
+            MediaPickerSheet { stickerKind in
+                canvasStore.addSticker(stickerKind)
+                showMediaPickerSheet = false
+                feedbackCenter.trigger(haptic: .notification(type: .success),
+                                     animation: .spring,
+                                     reduceMotion: reduceMotion)
             }
         }
     }

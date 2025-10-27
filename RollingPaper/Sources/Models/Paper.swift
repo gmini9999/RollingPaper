@@ -1,4 +1,5 @@
 import SwiftUI
+import PencilKit
 
 public enum PaperCanvasDefaults {
     public static let baseSize = CGSize(width: 1024, height: 768)
@@ -10,6 +11,8 @@ public enum PaperStickerKind: Equatable {
     case text(PaperStickerTextContent)
     case photo(PaperStickerImageContent)
     case doodle(PaperStickerDoodleContent)
+    case voice(PaperStickerVoiceContent)
+    case video(PaperStickerVideoContent)
 
     public var displayName: String {
         switch self {
@@ -19,6 +22,10 @@ public enum PaperStickerKind: Equatable {
             return "Photo"
         case .doodle:
             return "Doodle"
+        case .voice:
+            return "Voice"
+        case .video:
+            return "Video"
         }
     }
 }
@@ -65,16 +72,84 @@ public struct PaperStickerImageContent: Equatable {
 }
 
 public struct PaperStickerDoodleContent: Equatable {
-    public var pathAssetName: String
+    // 기존 pathAssetName 기반 호환성 유지
+    public var pathAssetName: String?
+    
+    // PencilKit 기반 드로잉 데이터
+    public var drawingData: Data?
+    
+    // 커스터마이징 옵션
     public var strokeColor: Color
     public var lineWidth: CGFloat
+    public var opacity: CGFloat
 
-    public init(pathAssetName: String,
+    public init(pathAssetName: String? = nil,
+                drawingData: Data? = nil,
                 strokeColor: Color = .rpAccent,
-                lineWidth: CGFloat = 4) {
+                lineWidth: CGFloat = 4,
+                opacity: CGFloat = 1.0) {
         self.pathAssetName = pathAssetName
+        self.drawingData = drawingData
         self.strokeColor = strokeColor
         self.lineWidth = lineWidth
+        self.opacity = max(0, min(opacity, 1.0))
+    }
+    
+    public static func fromPencilKitDrawing(_ pkDrawing: PKDrawing,
+                                           strokeColor: Color = .rpAccent,
+                                           lineWidth: CGFloat = 4) -> Self {
+        return PaperStickerDoodleContent(
+            pathAssetName: nil,
+            drawingData: pkDrawing.dataRepresentation(),
+            strokeColor: strokeColor,
+            lineWidth: lineWidth
+        )
+    }
+}
+
+public struct PaperStickerVoiceContent: Equatable {
+    public var audioURL: URL
+    public var duration: TimeInterval
+    public var title: String?
+    public var waveformData: [Float]?
+
+    public init(audioURL: URL,
+                duration: TimeInterval,
+                title: String? = nil,
+                waveformData: [Float]? = nil) {
+        self.audioURL = audioURL
+        self.duration = max(0, duration)
+        self.title = title
+        self.waveformData = waveformData
+    }
+    
+    public var formattedDuration: String {
+        let minutes = Int(duration) / 60
+        let seconds = Int(duration) % 60
+        return String(format: "%d:%02d", minutes, seconds)
+    }
+}
+
+public struct PaperStickerVideoContent: Equatable {
+    public var videoURL: URL
+    public var duration: TimeInterval
+    public var title: String?
+    public var thumbnailURL: URL?
+
+    public init(videoURL: URL,
+                duration: TimeInterval,
+                title: String? = nil,
+                thumbnailURL: URL? = nil) {
+        self.videoURL = videoURL
+        self.duration = max(0, duration)
+        self.title = title
+        self.thumbnailURL = thumbnailURL
+    }
+    
+    public var formattedDuration: String {
+        let minutes = Int(duration) / 60
+        let seconds = Int(duration) % 60
+        return String(format: "%d:%02d", minutes, seconds)
     }
 }
 

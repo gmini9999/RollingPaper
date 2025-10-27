@@ -13,7 +13,6 @@ public final class PaperCanvasStore: ObservableObject {
     @Published private(set) public var state: PaperCanvasState
     public let events = PassthroughSubject<Event, Never>()
 
-    // Indicates if canvas-level interactions (pan/zoom) are currently in progress.
     @Published public var isCanvasInteracting: Bool = false
 
     private let bounceAllowance: CGFloat = 0
@@ -29,15 +28,11 @@ public final class PaperCanvasStore: ObservableObject {
         self.init(state: .mock())
     }
 
-    // MARK: - Accessors
-
     public var stickers: [PaperSticker] { state.stickers }
     public var selection: PaperCanvasSelection { state.selection }
     public var canvasTransform: PaperCanvasTransform { state.canvasTransform }
     public var activeStickerID: UUID? { state.selection.activeStickerID }
     public var isEditing: Bool { state.selection.isEditing }
-
-    // MARK: - Canvas Controls
 
     public func setCanvasScale(_ scale: CGFloat, canvasSize: CGSize? = nil) {
         state.canvasTransform.scale = scale
@@ -94,8 +89,6 @@ public final class PaperCanvasStore: ObservableObject {
         }
     }
 
-    // MARK: - Selection & Edit Mode
-
     public func selectSticker(_ id: UUID?) {
         if selection.activeStickerID == id, selection.isEditing == false { return }
         state.selection.select(stickerID: id)
@@ -130,7 +123,22 @@ public final class PaperCanvasStore: ObservableObject {
         return index(for: id) != nil
     }
 
-    // MARK: - Sticker Mutation
+    public func addSticker(_ stickerKind: PaperStickerKind) {
+        let transform = PaperStickerTransform(
+            position: CGPoint(x: 0, y: 0),
+            baseSize: CGSize(width: 200, height: 100),
+            scale: 1.0,
+            rotation: .zero
+        )
+        let zIndex = Double(state.stickers.count)
+        let sticker = PaperSticker(
+            kind: stickerKind,
+            transform: transform,
+            zIndex: zIndex
+        )
+        state.stickers.append(sticker)
+        selectSticker(sticker.id)
+    }
 
     public func updateStickerTransform(_ id: UUID, _ transformMutation: (inout PaperStickerTransform) -> Void) {
         guard let index = index(for: id), state.stickers.indices.contains(index) else { return }
@@ -192,8 +200,6 @@ public final class PaperCanvasStore: ObservableObject {
             transform.position.y = min(max(transform.position.y, minY), maxY)
         }
     }
-
-    // MARK: - Helpers
 
     public func fitCanvas(to canvasSize: CGSize) {
         guard canvasSize.width > 0, canvasSize.height > 0 else { return }
