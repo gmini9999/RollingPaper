@@ -4,7 +4,7 @@ struct AudioRecorderSheet: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.interactionFeedbackCenter) private var feedbackCenter
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    var store: PaperCanvasStore
+    let model: PaperEditorViewModel
     @State private var viewModel = AudioRecordingViewModel()
     
     var body: some View {
@@ -115,23 +115,8 @@ struct AudioRecorderSheet: View {
     
     private func addVoiceObject() {
         guard let audioURL = viewModel.recordedAudioURL else { return }
-        
-        let defaultSize = CGSize(width: 100, height: 100)
-        let transform = ObjectTransform(
-            position: .zero,
-            scale: 1.0,
-            rotation: .zero,
-            size: defaultSize
-        )
-        
-        let voiceObject = VoiceObject(
-            transform: transform,
-            zIndex: Double(store.objects.count),
-            audioURL: audioURL,
-            duration: viewModel.recordingDuration
-        )
-        
-        store.addObject(voiceObject)
+
+        model.addVoiceObject(audioURL: audioURL, duration: viewModel.recordingDuration)
         dismiss()
     }
 }
