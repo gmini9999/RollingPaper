@@ -2,7 +2,7 @@ import SwiftUI
 
 struct StickyNoteSheet: View {
     @Environment(\.dismiss) private var dismiss
-    var store: PaperCanvasStore
+    let model: PaperEditorViewModel
     
     @State private var noteText: String = ""
     @State private var noteColor: Color = .yellow
@@ -127,24 +127,7 @@ struct StickyNoteSheet: View {
     }
     
     private func addStickyNote() {
-        let defaultSize = CGSize(width: 200, height: 150)
-        let transform = ObjectTransform(
-            position: .zero,
-            scale: 1.0,
-            rotation: .zero,
-            size: defaultSize
-        )
-        
-        let stickyNote = StickyNoteObject(
-            transform: transform,
-            zIndex: Double(store.objects.count),
-            text: noteText,
-            noteColor: noteColor,
-            fontName: "SF Pro",
-            fontSize: 16
-        )
-        
-        store.addObject(stickyNote)
+        model.addStickyNote(text: noteText, noteColor: noteColor)
         dismiss()
     }
 }
