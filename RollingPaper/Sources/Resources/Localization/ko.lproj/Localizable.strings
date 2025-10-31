@@ -1,0 +1,54 @@
+/* Paper Toolbar */
+"paper.toolbar.pencil" = "그리기";
+"paper.toolbar.text" = "텍스트";
+"paper.toolbar.shape" = "도형";
+"paper.toolbar.clip" = "클립 추가";
+
+/* Paper Clip Menu */
+"paper.clip.sticker" = "스티커";
+"paper.clip.photo" = "사진 또는 비디오";
+"paper.clip.sticky_note" = "스티커 메모";
+"paper.clip.voice_memo" = "음성 메모";
+
+/* Common */
+"common.cancel" = "취소";
+"common.done" = "완료";
+"common.save" = "저장";
+"common.delete" = "삭제";
+"common.edit" = "편집";
+"common.share" = "공유";
+
+/* Navigation */
+"navigation.sidebar.title" = "탐색";
+"navigation.sidebar.section.main" = "메인";
+"navigation.sidebar.section.paper" = "페이퍼";
+"navigation.sidebar.launch" = "시작";
+"navigation.sidebar.auth" = "로그인";
+"navigation.sidebar.home" = "홈";
+"navigation.sidebar.new_paper" = "새 페이퍼";
+
+"navigation.supplementary.layout_overview" = "레이아웃 개요";
+"navigation.supplementary.editing_description" = "댓글을 검토하고 콘텐츠가 완성되면 공유하세요.";
+"navigation.supplementary.sharing_description" = "생성된 링크를 배포하거나 이 열에서 바로 협업자를 초대하세요.";
+"navigation.supplementary.default_description" = "목적지를 선택하거나 모달 작업을 열어 컨텍스트 팁과 빠른 작업을 확인하세요.";
+"navigation.supplementary.device_context" = "디바이스 정보";
+"navigation.supplementary.open_share" = "공유 열기";
+"navigation.supplementary.breakpoint.compact" = "컴팩트 폭";
+"navigation.supplementary.breakpoint.medium" = "중간 폭";
+"navigation.supplementary.breakpoint.expanded" = "확장 폭";
+"navigation.supplementary.device.iphone" = "iPhone";
+"navigation.supplementary.device.ipad" = "iPad";
+"navigation.supplementary.orientation.portrait" = "세로";
+"navigation.supplementary.orientation.landscape" = "가로";
+"navigation.supplementary.editing_title" = "편집 중 #%@";
+"navigation.supplementary.sharing_title" = "공유 중 #%@";
+"navigation.supplementary.device_summary" = "현재 %@ 상태의 %@에서 (%d×%dpt, %@)입니다.";
+
+/* Errors */
+"error.audio.session_setup" = "오디오 세션 설정 오류: %@";
+"error.audio.recording_start" = "녹음 시작 오류: %@";
+"error.audio.playback" = "오디오 재생 오류: %@";
+
+/* Placeholders */
+"placeholder.coming_soon" = "출시 예정";
+
