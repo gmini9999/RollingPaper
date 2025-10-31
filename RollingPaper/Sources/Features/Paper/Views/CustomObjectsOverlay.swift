@@ -2,8 +2,8 @@ import SwiftUI
 
 struct CustomObjectsOverlay: View {
     let objects: [any CanvasObject]
-    @EnvironmentObject var store: PaperCanvasStore
-    @EnvironmentObject var gestureManager: GestureCoordinationManager
+    @Environment(PaperCanvasStore.self) private var store
+    @Environment(GestureCoordinationManager.self) private var gestureManager
     
     var body: some View {
         GeometryReader { geometry in
@@ -80,9 +80,9 @@ struct CustomObjectsOverlay: View {
     @ViewBuilder
     private func selectionOverlay(isSelected: Bool) -> some View {
         if isSelected {
-            RoundedRectangle(cornerRadius: 32, style: .continuous)
+            RoundedRectangle(cornerRadius: .rpCornerXXL + 12, style: .continuous)
                 .stroke(Color.accentColor, lineWidth: 2.5)
-                .shadow(color: Color.accentColor.opacity(0.3), radius: 12, y: 6)
+                .shadow(color: Color.accentColor.opacity(OpacityTokens.medium), radius: .rpSpaceM, y: 6)
                 .padding(-10)
                 .allowsHitTesting(false)
         }

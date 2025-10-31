@@ -1,24 +1,24 @@
-import Combine
 import SwiftUI
 import PencilKit
 
 @MainActor
-public final class PaperCanvasStore: ObservableObject {
+@Observable
+public final class PaperCanvasStore {
     public enum Event: Equatable {
         case selectionChanged(objectIDs: Set<UUID>)
         case objectDeleted(objectID: UUID)
         case canvasTransformChanged(scale: CGFloat, offset: CGSize)
     }
 
-    // MARK: - Published State
-    @Published private(set) public var objects: [any CanvasObject] = []
-    @Published private(set) public var selectedObjectIDs: Set<UUID> = []
-    @Published public var drawing: PKDrawing = PKDrawing()
-    @Published private(set) public var state: PaperCanvasState
+    // MARK: - State
+    private(set) public var objects: [any CanvasObject] = []
+    private(set) public var selectedObjectIDs: Set<UUID> = []
+    public var drawing: PKDrawing = PKDrawing()
+    private(set) public var state: PaperCanvasState
+    public var isCanvasInteracting: Bool = false
     
-    public let events = PassthroughSubject<Event, Never>()
-    
-    @Published public var isCanvasInteracting: Bool = false
+    // Event callbacks
+    public var onEvent: ((Event) -> Void)?
 
     private let bounceAllowance: CGFloat = 0
     private let minimumScaleFloor: CGFloat = 0.1
@@ -48,22 +48,22 @@ public final class PaperCanvasStore: ObservableObject {
         } else {
             selectedObjectIDs.insert(id)
         }
-        events.send(.selectionChanged(objectIDs: selectedObjectIDs))
+        onEvent?(.selectionChanged(objectIDs: selectedObjectIDs))
     }
     
     public func deselectAll() {
         selectedObjectIDs.removeAll()
-        events.send(.selectionChanged(objectIDs: []))
+        onEvent?(.selectionChanged(objectIDs: []))
     }
     
     public func deleteSelectedObjects() {
         let idsToDelete = selectedObjectIDs
         objects.removeAll { idsToDelete.contains($0.id) }
         for id in idsToDelete {
-            events.send(.objectDeleted(objectID: id))
+            onEvent?(.objectDeleted(objectID: id))
         }
         selectedObjectIDs.removeAll()
-        events.send(.selectionChanged(objectIDs: []))
+        onEvent?(.selectionChanged(objectIDs: []))
     }
     
     public func updateTransform(for id: UUID, _ transform: ObjectTransform) {
@@ -160,7 +160,7 @@ public final class PaperCanvasStore: ObservableObject {
     // MARK: - Private Helpers
     
     private func publishCanvasTransformChanged() {
-        events.send(.canvasTransformChanged(scale: state.canvasTransform.scale,
+        onEvent?(.canvasTransformChanged(scale: state.canvasTransform.scale,
                                             offset: state.canvasTransform.offset))
     }
 

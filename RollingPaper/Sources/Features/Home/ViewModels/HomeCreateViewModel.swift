@@ -1,4 +1,3 @@
-import Combine
 import Foundation
 import SwiftUI
 
@@ -50,7 +49,9 @@ enum HomeCreateAppearanceCatalog {
     ]
 }
 
-final class HomeCreateViewModel: ObservableObject {
+@MainActor
+@Observable
+final class HomeCreateViewModel {
     enum Step: Int, CaseIterable {
         case basics
         case appearance
@@ -74,12 +75,12 @@ final class HomeCreateViewModel: ObservableObject {
         }
     }
 
-    @Published var currentStep: Step = .basics
-    @Published var draft: PaperFormDraft = .init()
-    @Published var draftAppearance: HomeCreateAppearanceDraft
+    var currentStep: Step = .basics
+    var draft: PaperFormDraft = .init()
+    var draftAppearance: HomeCreateAppearanceDraft
 
-    @Published var backgroundOptions: [HomeCreateBackgroundOption]
-    @Published var showValidationFeedback = false
+    var backgroundOptions: [HomeCreateBackgroundOption]
+    var showValidationFeedback = false
 
     var canGoBack: Bool {
         currentStep != .basics
@@ -122,8 +123,8 @@ final class HomeCreateViewModel: ObservableObject {
         }
     }
 
-    init(backgrounds: [HomeCreateBackgroundOption] = HomeCreateAppearanceCatalog.backgrounds) {
-        backgroundOptions = backgrounds
+    init(backgrounds: [HomeCreateBackgroundOption]? = nil) {
+        backgroundOptions = backgrounds ?? HomeCreateAppearanceCatalog.backgrounds
         draftAppearance = HomeCreateAppearanceDraft(selectedBackgroundID: nil)
     }
 

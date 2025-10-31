@@ -1,15 +1,15 @@
 import Foundation
-import Combine
 import AVFoundation
 
 @MainActor
-class AudioRecordingViewModel: NSObject, ObservableObject, AVAudioRecorderDelegate, AVAudioPlayerDelegate {
-    @Published var isRecording = false
-    @Published var recordingDuration: TimeInterval = 0
-    @Published var audioTitle: String = ""
-    @Published var recordedAudioURL: URL?
-    @Published var isPlaying = false
-    @Published var levelSamples: [CGFloat] = Array(repeating: 0, count: 40)
+@Observable
+class AudioRecordingViewModel: NSObject, AVAudioRecorderDelegate, AVAudioPlayerDelegate {
+    var isRecording = false
+    var recordingDuration: TimeInterval = 0
+    var audioTitle: String = ""
+    var recordedAudioURL: URL?
+    var isPlaying = false
+    var levelSamples: [CGFloat] = Array(repeating: 0, count: 40)
     
     private var audioRecorder: AVAudioRecorder?
     private var audioPlayer: AVAudioPlayer?
@@ -27,7 +27,7 @@ class AudioRecordingViewModel: NSObject, ObservableObject, AVAudioRecorderDelega
             try session.setCategory(.playAndRecord, mode: .default, options: [])
             try session.setActive(true)
         } catch {
-            RPLogger.error(L10n.Error.Audio.sessionSetup(error.localizedDescription), error: error, category: .audio)
+            
         }
     }
     
@@ -62,7 +62,7 @@ class AudioRecordingViewModel: NSObject, ObservableObject, AVAudioRecorderDelega
             levelSamples = Array(repeating: 0, count: maxSamples)
             startDisplayLink()
         } catch {
-            RPLogger.error(L10n.Error.Audio.recordingStart(error.localizedDescription), error: error, category: .audio)
+           
         }
     }
     
@@ -128,7 +128,6 @@ class AudioRecordingViewModel: NSObject, ObservableObject, AVAudioRecorderDelega
             audioPlayer?.play()
             isPlaying = true
         } catch {
-            RPLogger.error(L10n.Error.Audio.playback(error.localizedDescription), error: error, category: .audio)
             isPlaying = false
         }
     }

@@ -7,21 +7,15 @@ struct ShareView: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var isCopied = false
 
-    private enum Layout {
-        static let sectionSpacing: CGFloat = 28
-        static let contentPadding: CGFloat = 24
-        static let cardCornerRadius: CGFloat = 24
-    }
-
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: Layout.sectionSpacing) {
+            VStack(alignment: .leading, spacing: .rpSpaceXXXL - 4) {
                 header
                 linkCard
                 tipsSection
             }
-            .padding(.horizontal, Layout.contentPadding)
-            .padding(.vertical, Layout.sectionSpacing)
+            .padding(.horizontal, .rpSpaceXXL)
+            .padding(.vertical, .rpSpaceXXXL - 4)
         }
         .background(Color(.systemGroupedBackground))
         .navigationTitle("공유")
@@ -30,47 +24,47 @@ struct ShareView: View {
         .overlay(alignment: .bottomTrailing) {
             if isCopied {
                 Label("링크를 복사했어요", systemImage: "checkmark.circle.fill")
-                    .font(.caption)
-                    .padding(.horizontal, 16)
+                    .font(Typography.caption)
+                    .padding(.horizontal, .rpSpaceL)
                     .padding(.vertical, 10)
                     .background(
-                        RoundedRectangle(cornerRadius: 18, style: .continuous)
+                        RoundedRectangle(cornerRadius: .rpCornerM + 6, style: .continuous)
                             .fill(.regularMaterial)
                     )
-                    .shadow(color: Color.black.opacity(0.2), radius: 12, y: 6)
-                    .padding(Layout.contentPadding)
+                    .shadow(color: ShadowTokens.medium.color, radius: ShadowTokens.medium.radius, y: ShadowTokens.medium.y)
+                    .padding(.rpSpaceXXL)
                     .transition(.move(edge: .trailing).combined(with: .opacity))
             }
         }
     }
 
     private var header: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: .rpSpaceM) {
             Text("함께 볼 수 있도록 공유하세요")
-                .font(.title3.weight(.semibold))
+                .font(Typography.title3)
 
             Text("링크를 복사하거나 공유하여 팀원과 친구들이 이 롤링페이퍼에 바로 참여할 수 있게 하세요.")
-                .font(.body)
+                .font(Typography.body)
                 .foregroundStyle(.secondary)
         }
     }
 
     private var linkCard: some View {
-        VStack(alignment: .leading, spacing: 20) {
+        VStack(alignment: .leading, spacing: .rpSpaceXL) {
             VStack(alignment: .leading, spacing: 4) {
                 Text("공유 링크")
-                    .font(.headline)
+                    .font(Typography.headline)
                 Text(shareURL.absoluteString)
-                    .font(.caption.monospaced())
+                    .font(Typography.caption.monospaced())
                     .foregroundStyle(.secondary)
                     .textSelection(.enabled)
                     .lineLimit(2)
             }
 
-            HStack(spacing: 16) {
+            HStack(spacing: .rpSpaceL) {
                 Button(action: copyLink) {
                     Text("링크 복사")
-                        .font(.body.weight(.semibold))
+                        .font(Typography.body.weight(.semibold))
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)
@@ -78,7 +72,7 @@ struct ShareView: View {
 
                 ShareLink(item: shareURL) {
                     Label("공유 시트", systemImage: "square.and.arrow.up")
-                        .font(.body.weight(.semibold))
+                        .font(Typography.body.weight(.semibold))
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.bordered)
@@ -87,33 +81,33 @@ struct ShareView: View {
 
             Divider()
 
-            HStack(spacing: 24) {
+            HStack(spacing: .rpSpaceXXL) {
                 detailCapsule(title: "초대 코드", value: shortCode)
                 detailCapsule(title: "링크 만료", value: "없음")
             }
         }
-        .padding(24)
+        .padding(.rpSpaceXXL)
         .background(
-            RoundedRectangle(cornerRadius: Layout.cardCornerRadius, style: .continuous)
+            RoundedRectangle(cornerRadius: .rpCornerXL, style: .continuous)
                 .fill(.regularMaterial)
         )
-        .shadow(color: Color.black.opacity(0.16), radius: 20, y: 10)
+        .shadow(color: ShadowTokens.large.color, radius: ShadowTokens.large.radius, y: ShadowTokens.large.y)
     }
 
     private var tipsSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: .rpSpaceM) {
             Text("공유 팁")
-                .font(.headline)
+                .font(Typography.headline)
             Text("앱 내의 참여 코드를 안내하거나, 메시지/메일에 링크를 붙여넣어 간편하게 초대할 수 있어요.")
-                .font(.body)
+                .font(Typography.body)
                 .foregroundStyle(.secondary)
         }
-        .padding(24)
+        .padding(.rpSpaceXXL)
         .background(
-            RoundedRectangle(cornerRadius: Layout.cardCornerRadius, style: .continuous)
+            RoundedRectangle(cornerRadius: .rpCornerXL, style: .continuous)
                 .fill(.regularMaterial)
         )
-        .shadow(color: Color.black.opacity(0.12), radius: 16, y: 8)
+        .shadow(color: ShadowTokens.medium.color, radius: ShadowTokens.medium.radius, y: ShadowTokens.medium.y)
     }
 
     private var shareURL: URL {
@@ -142,18 +136,18 @@ struct ShareView: View {
     private func detailCapsule(title: String, value: String) -> some View {
         VStack(alignment: .leading, spacing: 6) {
             Text(title)
-                .font(.caption)
+                .font(Typography.caption)
                 .foregroundStyle(.secondary)
             Text(value)
-                .font(.body.weight(.semibold))
+                .font(Typography.body.weight(.semibold))
         }
-        .padding(.horizontal, 16)
+        .padding(.horizontal, .rpSpaceL)
         .padding(.vertical, 10)
         .background(
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .fill(Color.secondary.opacity(0.15))
+            RoundedRectangle(cornerRadius: .rpCornerL, style: .continuous)
+                .fill(Color.secondary.opacity(OpacityTokens.light - 0.1))
                 .overlay(
-                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    RoundedRectangle(cornerRadius: .rpCornerL, style: .continuous)
                         .stroke(Color.primary.opacity(0.08), lineWidth: 0.5)
                 )
         )

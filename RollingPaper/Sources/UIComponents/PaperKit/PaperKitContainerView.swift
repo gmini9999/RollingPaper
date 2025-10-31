@@ -2,12 +2,12 @@ import SwiftUI
 import PaperKit
 import PencilKit
 import UIKit
-import Combine
 
 @MainActor
-final class PaperKitState: ObservableObject {
-    @Published var isDrawingToolActive: Bool = false
-    @Published var hasSelection: Bool = false
+@Observable
+final class PaperKitState {
+    var isDrawingToolActive: Bool = false
+    var hasSelection: Bool = false
     private(set) weak var controller: PaperMarkupViewController?
     let canvasController = PaperCanvasControllerActor()
 
@@ -17,9 +17,11 @@ final class PaperKitState: ObservableObject {
     }
 
     func unbindController() {
-        controller = nil
-        isDrawingToolActive = false
-        hasSelection = false
+        Task { @MainActor in
+            controller = nil
+            isDrawingToolActive = false
+            hasSelection = false
+        }
         Task { await canvasController.detach() }
     }
 
@@ -34,7 +36,7 @@ final class PaperKitState: ObservableObject {
 
 struct PaperKitContainerView: UIViewControllerRepresentable {
     typealias UIViewControllerType = PaperMarkupViewController
-    @ObservedObject var state: PaperKitState
+    var state: PaperKitState
     
     func makeUIViewController(context: Context) -> PaperMarkupViewController {
         let markupVC = PaperMarkupViewController(supportedFeatureSet: .latest)

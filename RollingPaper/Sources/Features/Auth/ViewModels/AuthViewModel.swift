@@ -1,8 +1,8 @@
-import Combine
 import Foundation
 
 @MainActor
-final class AuthViewModel: ObservableObject {
+@Observable
+final class AuthViewModel {
     enum State: Equatable {
         case signedOut
         case loading(AuthProvider)
@@ -32,9 +32,9 @@ final class AuthViewModel: ObservableObject {
         let timestamp: Date
     }
 
-    @Published private(set) var state: State
-    @Published private(set) var isProcessing: Bool = false
-    @Published private(set) var feedback: Feedback?
+    private(set) var state: State
+    private(set) var isProcessing: Bool = false
+    private(set) var feedback: Feedback?
 
     var currentSession: UserSession? {
         switch state {
@@ -51,23 +51,29 @@ final class AuthViewModel: ObservableObject {
 
     private let service: AuthService
     private let timeoutInterval: TimeInterval
-    private var cancellables = Set<AnyCancellable>()
     private var timeoutTask: Task<Void, Never>?
     private var currentAttemptID: UUID?
     private var timedOutAttempts = Set<UUID>()
-    private var shouldIgnoreNextSessionUpdate = false
+    private var sessionObserverTask: Task<Void, Never>?
 
     init(service: AuthService, timeoutInterval: TimeInterval = 8) {
         self.service = service
         self.timeoutInterval = timeoutInterval
-
-        if let session = service.currentSession {
-            state = .authenticated(session)
-        } else {
-            state = .signedOut
+        self.state = .signedOut
+        
+        Task { @MainActor [weak self] in
+            guard let self else { return }
+            if let session = await service.currentSession {
+                self.state = .authenticated(session)
+            }
+            self.startSessionObserver()
         }
-
-        observeSessionUpdates()
+    }
+    
+    @MainActor
+    deinit {
+        sessionObserverTask?.cancel()
+        timeoutTask?.cancel()
     }
 
     func signIn(with provider: AuthProvider) async {
@@ -124,7 +130,6 @@ final class AuthViewModel: ObservableObject {
             state = .signedOut
         }
         feedback = nil
-        shouldIgnoreNextSessionUpdate = false
         cancelTimeout()
         currentAttemptID = nil
     }
@@ -145,30 +150,34 @@ final class AuthViewModel: ObservableObject {
                             timestamp: Date())
     }
 
-    private func observeSessionUpdates() {
-        service.sessionPublisher
-            .receive(on: RunLoop.main)
-            .sink { [weak self] session in
+    private func startSessionObserver() {
+        sessionObserverTask = Task { [weak self] in
+            while !Task.isCancelled {
                 guard let self else { return }
 
-                if let session {
-                    if self.shouldIgnoreNextSessionUpdate {
-                        self.shouldIgnoreNextSessionUpdate = false
-                        return
-                    }
-
-                    if case .authenticated(let current) = self.state, current == session {
-                        return
-                    }
+                let currentSession = await self.service.currentSession
+                
+                if let session = currentSession {
+                    if case .authenticated(let existing) = self.state, existing == session {
+                        // No change
+                    } else if case .failure = self.state {
+                        // Don't override failure state
+                    } else {
                     self.state = .authenticated(session)
+                    }
                 } else {
                     if case .failure = self.state {
-                        return
-                    }
+                        // Don't override failure state
+                    } else if case .signedOut = self.state {
+                        // Already signed out
+                    } else {
                     self.state = .signedOut
                 }
             }
-            .store(in: &cancellables)
+                
+                try? await Task.sleep(nanoseconds: 500_000_000) // Check every 0.5s
+            }
+        }
     }
 
     private func startTimeout(for provider: AuthProvider, attemptID: UUID) {
@@ -197,7 +206,6 @@ final class AuthViewModel: ObservableObject {
         cancelTimeout()
         currentAttemptID = nil
         isProcessing = false
-        shouldIgnoreNextSessionUpdate = true
         state = .failure(provider, .timedOut)
         feedback = Feedback(kind: .failure,
                             title: "연결 지연",

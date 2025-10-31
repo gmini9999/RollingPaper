@@ -1,11 +1,11 @@
-import Combine
 import Foundation
 
 @MainActor
-final class HomeViewModel: ObservableObject {
-    @Published private(set) var summaries: [HomePaperSummary]
-    @Published private(set) var isLoading: Bool
-    @Published private(set) var recentJoinCodes: [String]
+@Observable
+final class HomeViewModel {
+    private(set) var summaries: [HomePaperSummary]
+    private(set) var isLoading: Bool
+    private(set) var recentJoinCodes: [String]
 
     private var page: Int
     private var canLoadMore: Bool
@@ -30,7 +30,7 @@ final class HomeViewModel: ObservableObject {
         isLoading = true
         defer { isLoading = false }
 
-        try? await Task.sleep(nanoseconds: 450_000_000)
+        try? await Task.sleep(nanoseconds: AppConstants.MockDelay.medium)
         page = 1
         canLoadMore = true
         summaries = HomePaperSummary.generateMockPage(page: page)
@@ -40,7 +40,7 @@ final class HomeViewModel: ObservableObject {
         guard canLoadMore,
               !isLoading,
               let index = summaries.firstIndex(where: { $0.id == summary.id }),
-              index >= summaries.count - 2
+              index >= summaries.count - AppConstants.Pagination.loadMoreThreshold
         else { return }
 
         Task { await loadMore() }
@@ -48,11 +48,11 @@ final class HomeViewModel: ObservableObject {
 
     func joinPaper(with rawCode: String) async throws -> HomePaperSummary {
         let normalized = normalizeJoinCode(rawCode)
-        guard normalized.count == 12 else {
+        guard normalized.count == AppConstants.JoinCode.length else {
             throw JoinError.invalidFormat
         }
 
-        try await Task.sleep(nanoseconds: 400_000_000)
+        try await Task.sleep(nanoseconds: AppConstants.MockDelay.short)
 
         if normalized.hasSuffix("0000") {
             throw JoinError.paperNotFound
@@ -82,18 +82,18 @@ final class HomeViewModel: ObservableObject {
             recentJoinCodes.remove(at: existingIndex)
         }
         recentJoinCodes.insert(code, at: 0)
-        if recentJoinCodes.count > 5 {
-            recentJoinCodes.removeLast(recentJoinCodes.count - 5)
+        if recentJoinCodes.count > AppConstants.JoinCode.maxRecent {
+            recentJoinCodes.removeLast(recentJoinCodes.count - AppConstants.JoinCode.maxRecent)
         }
     }
 
     private func normalizeJoinCode(_ rawCode: String) -> String {
         let allowed = rawCode.uppercased().filter { $0.isNumber || ($0.isLetter && $0.isASCII) }
-        return String(allowed.prefix(12))
+        return String(allowed.prefix(AppConstants.JoinCode.length))
     }
 
     private func formatJoinCode(_ normalized: String) -> String {
-        stride(from: 0, to: normalized.count, by: 4)
+        stride(from: 0, to: normalized.count, by: AppConstants.JoinCode.chunkSize)
             .map { index in
                 let start = normalized.index(normalized.startIndex, offsetBy: index)
                 let end = normalized.index(start, offsetBy: 4, limitedBy: normalized.endIndex) ?? normalized.endIndex
@@ -107,7 +107,7 @@ final class HomeViewModel: ObservableObject {
         isLoading = true
         defer { isLoading = false }
 
-        try? await Task.sleep(nanoseconds: 400_000_000)
+        try? await Task.sleep(nanoseconds: AppConstants.MockDelay.short)
         page += 1
         let nextPage = HomePaperSummary.generateMockPage(page: page)
         if nextPage.isEmpty {
