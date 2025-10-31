@@ -1,4 +1,3 @@
-import Combine
 import SwiftUI
 import UIKit
 
@@ -17,17 +16,18 @@ enum PaperMode: Equatable, Sendable {
 /// Centralized manager that coordinates all gestures based on the current application mode.
 /// Uses a state machine to control gesture recognition.
 @MainActor
-final class GestureCoordinationManager: ObservableObject {
-    // MARK: - Published Properties
+@Observable
+final class GestureCoordinationManager {
+    // MARK: - Properties
     
     /// The current mode of gesture interaction
-    @Published private(set) var currentMode: PaperMode = .default
+    private(set) var currentMode: PaperMode = .default
     
     /// The ID of the currently edited sticker (if any)
-    @Published private(set) var selectedStickerId: UUID?
+    private(set) var selectedStickerId: UUID?
     
     /// Indicates if any canvas gesture is currently in progress
-    @Published private(set) var isCanvasInteracting: Bool = false
+    private(set) var isCanvasInteracting: Bool = false
     
     // MARK: - Haptic Feedback
     

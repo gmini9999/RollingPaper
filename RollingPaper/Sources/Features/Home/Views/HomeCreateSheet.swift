@@ -4,7 +4,7 @@ struct HomeCreateSheet: View {
     @Environment(\.interactionFeedbackCenter) private var feedbackCenter
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
-    @ObservedObject var viewModel: HomeCreateViewModel
+    @Bindable var viewModel: HomeCreateViewModel
     var onCancel: () -> Void
     var onComplete: () -> Void
 

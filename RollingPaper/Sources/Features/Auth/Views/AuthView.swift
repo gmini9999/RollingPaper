@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct AuthView: View {
-    @ObservedObject var viewModel: AuthViewModel
+    var viewModel: AuthViewModel
     var onAuthenticated: (() -> Void)?
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @State private var hasNavigatedAfterAuth = false
@@ -64,22 +64,38 @@ struct AuthView: View {
 
     private var providerButtons: some View {
         VStack(spacing: 20) {
-            SocialLoginButton(
-                style: .apple,
-                isLoading: viewModel.loadingProvider == .apple,
-                isEnabled: canInteract
-            ) {
+            Button {
                 handleSignIn(provider: .apple)
+            } label: {
+                HStack {
+                    Image(systemName: "apple.logo")
+                    Text("Sign in with Apple")
+                }
+                .frame(maxWidth: .infinity)
+                .padding()
+                .background(Color.black)
+                .foregroundColor(.white)
+                .cornerRadius(12)
             }
+            .disabled(!canInteract || viewModel.loadingProvider == .apple)
+            .opacity((viewModel.loadingProvider == .apple || !canInteract) ? 0.6 : 1.0)
             .accessibilityHint("Apple 계정으로 로그인")
 
-            SocialLoginButton(
-                style: .google,
-                isLoading: viewModel.loadingProvider == .google,
-                isEnabled: canInteract
-            ) {
+            Button {
                 handleSignIn(provider: .google)
+            } label: {
+                HStack {
+                    Image(systemName: "g.circle.fill")
+                    Text("Sign in with Google")
+                }
+                .frame(maxWidth: .infinity)
+                .padding()
+                .background(Color.blue)
+                .foregroundColor(.white)
+                .cornerRadius(12)
             }
+            .disabled(!canInteract || viewModel.loadingProvider == .google)
+            .opacity((viewModel.loadingProvider == .google || !canInteract) ? 0.6 : 1.0)
             .accessibilityHint("Google 계정으로 로그인")
         }
     }
@@ -139,5 +155,4 @@ struct AuthView: View {
     NavigationStack {
         AuthView(viewModel: AuthViewModel(service: MockAuthService(configuration: configuration)))
     }
-    .previewInterfaceOrientation(.landscapeLeft)
 }

@@ -10,6 +10,9 @@
 "paper.clip.sticky_note" = "Sticky Note";
 "paper.clip.voice_memo" = "Voice Memo";
 
+/* Home */
+"home.form.title_error" = "Please enter a title.";
+
 /* Common */
 "common.cancel" = "Cancel";
 "common.done" = "Done";
@@ -17,32 +20,6 @@
 "common.delete" = "Delete";
 "common.edit" = "Edit";
 "common.share" = "Share";
-
-/* Navigation */
-"navigation.sidebar.title" = "Navigation";
-"navigation.sidebar.section.main" = "Main";
-"navigation.sidebar.section.paper" = "Paper";
-"navigation.sidebar.launch" = "Launch";
-"navigation.sidebar.auth" = "Sign In";
-"navigation.sidebar.home" = "Home";
-"navigation.sidebar.new_paper" = "New Paper";
-
-"navigation.supplementary.layout_overview" = "Layout Overview";
-"navigation.supplementary.editing_description" = "Review comments and share once the content is complete.";
-"navigation.supplementary.sharing_description" = "Distribute the generated link or invite collaborators directly from this column.";
-"navigation.supplementary.default_description" = "Select a destination or open a modal action to see contextual tips and quick actions.";
-"navigation.supplementary.device_context" = "Device Context";
-"navigation.supplementary.open_share" = "Open Share";
-"navigation.supplementary.breakpoint.compact" = "compact width";
-"navigation.supplementary.breakpoint.medium" = "medium width";
-"navigation.supplementary.breakpoint.expanded" = "expanded width";
-"navigation.supplementary.device.iphone" = "iPhone";
-"navigation.supplementary.device.ipad" = "iPad";
-"navigation.supplementary.orientation.portrait" = "portrait";
-"navigation.supplementary.orientation.landscape" = "landscape";
-"navigation.supplementary.editing_title" = "Editing #%@";
-"navigation.supplementary.sharing_title" = "Sharing #%@";
-"navigation.supplementary.device_summary" = "Currently in %@ on %@ (%d×%dpt, %@).";
 
 /* Errors */
 "error.audio.session_setup" = "Audio session setup error: %@";

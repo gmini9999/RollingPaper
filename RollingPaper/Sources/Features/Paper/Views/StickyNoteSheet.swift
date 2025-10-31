@@ -2,7 +2,7 @@ import SwiftUI
 
 struct StickyNoteSheet: View {
     @Environment(\.dismiss) private var dismiss
-    @ObservedObject var store: PaperCanvasStore
+    var store: PaperCanvasStore
     
     @State private var noteText: String = ""
     @State private var noteColor: Color = .yellow
@@ -10,23 +10,23 @@ struct StickyNoteSheet: View {
     
     private let availableColors: [Color] = [
         .yellow,
-        Color(red: 1.0, green: 0.9, blue: 0.7), // Peach
-        Color(red: 0.7, green: 1.0, blue: 0.9), // Mint
-        Color(red: 1.0, green: 0.8, blue: 0.9), // Pink
-        Color(red: 0.9, green: 0.9, blue: 1.0), // Lavender
+        Color(red: 1.0, green: 0.9, blue: 0.7),
+        Color(red: 0.7, green: 1.0, blue: 0.9),
+        Color(red: 1.0, green: 0.8, blue: 0.9),
+        Color(red: 0.9, green: 0.9, blue: 1.0),
     ]
     
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(alignment: .leading, spacing: SheetStyleGuide.Layout.sectionSpacing) {
+                VStack(alignment: .leading, spacing: .rpSpaceXXXL - 4) {
                     previewSection
                     textEditorSection
                     colorPickerSection
                 }
-                .frame(maxWidth: SheetStyleGuide.Layout.maxContentWidth, alignment: .leading)
+                .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.vertical, .rpSpaceXL)
-                .padding(.horizontal, SheetStyleGuide.Layout.horizontalPadding)
+                .padding(.horizontal, .rpSpaceXXL)
             }
             .navigationTitle("스티커 메모")
             .navigationBarTitleDisplayMode(.inline)
@@ -47,26 +47,24 @@ struct StickyNoteSheet: View {
                 isTextFieldFocused = true
             }
         }
-        .rpNavigationChrome()
-        .rpBackground()
-        .sheetChrome()
+        .background(Color(.systemGroupedBackground))
     }
     
     private var previewSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: .rpSpaceM) {
             Text("미리보기")
-                .font(.rpCaption)
-                .foregroundColor(Color.rpTextSecondary)
+                .font(Typography.caption)
+                .foregroundColor(.secondary)
             
             ZStack(alignment: .topLeading) {
                 noteColor
-                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                    .shadow(color: .black.opacity(0.12), radius: 8, y: 4)
+                    .clipShape(RoundedRectangle(cornerRadius: .rpCornerL, style: .continuous))
+                    .shadow(color: ShadowTokens.medium.color, radius: ShadowTokens.medium.radius, y: ShadowTokens.medium.y)
                 
                 Text(noteText.isEmpty ? "메모를 입력하세요" : noteText)
                     .font(.system(size: 16))
                     .foregroundColor(noteText.isEmpty ? .gray : .black)
-                    .padding(16)
+                    .padding(.rpSpaceL)
                     .frame(maxWidth: .infinity, alignment: .topLeading)
             }
             .frame(height: 140)
@@ -74,30 +72,30 @@ struct StickyNoteSheet: View {
     }
     
     private var textEditorSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: .rpSpaceM) {
             Text("메모 내용")
-                .font(.rpCaption)
-                .foregroundColor(Color.rpTextSecondary)
+                .font(Typography.caption)
+                .foregroundColor(.secondary)
             
             TextEditor(text: $noteText)
                 .frame(height: 160)
                 .padding(.rpSpaceM)
                 .background(
-                    RoundedRectangle(cornerRadius: 22, style: .continuous)
+                    RoundedRectangle(cornerRadius: .rpCornerXL + 2, style: .continuous)
                         .fill(.ultraThinMaterial)
-                        .shadow(color: .black.opacity(0.08), radius: 6, y: 2)
+                        .shadow(color: ShadowTokens.small.color, radius: ShadowTokens.small.radius, y: ShadowTokens.small.y)
                 )
                 .focused($isTextFieldFocused)
         }
     }
     
     private var colorPickerSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: .rpSpaceM) {
             Text("색상")
-                .font(.rpCaption)
-                .foregroundColor(Color.rpTextSecondary)
+                .font(Typography.caption)
+                .foregroundColor(.secondary)
             
-            HStack(spacing: 12) {
+            HStack(spacing: .rpSpaceM) {
                 ForEach(availableColors, id: \.self) { color in
                     colorSwatch(color: color)
                 }
@@ -109,7 +107,7 @@ struct StickyNoteSheet: View {
         Circle()
             .fill(color)
             .frame(width: 48, height: 48)
-            .shadow(color: .black.opacity(0.12), radius: 4, y: 2)
+            .shadow(color: ShadowTokens.small.color, radius: ShadowTokens.small.radius, y: ShadowTokens.small.y)
             .overlay(
                 Circle()
                     .strokeBorder(Color.white.opacity(0.6), lineWidth: color == noteColor ? 3 : 1)
@@ -119,7 +117,7 @@ struct StickyNoteSheet: View {
                     if color == noteColor {
                         Image(systemName: "checkmark")
                             .foregroundColor(.primary)
-                            .font(.system(size: 18, weight: .semibold))
+                            .font(Typography.body.weight(.semibold))
                     }
                 }
             )

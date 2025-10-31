@@ -264,7 +264,7 @@ public struct PaperCanvasState: Equatable, Sendable {
     public var backgroundColor: Color
 
     public init(canvasTransform: PaperCanvasTransform = .init(),
-                backgroundColor: Color = .rpSurface,
+                backgroundColor: Color = Color(.systemBackground),
                 canvasSize: CGSize = PaperCanvasDefaults.baseSize) {
         self.canvasTransform = canvasTransform
         self.backgroundColor = backgroundColor

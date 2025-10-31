@@ -3,8 +3,8 @@ import PaperKit
 import PhotosUI
 
 struct BottomToolbarView: View {
-    @ObservedObject var paperKitState: PaperKitState
-    @ObservedObject var canvasStore: PaperCanvasStore
+    var paperKitState: PaperKitState
+    var canvasStore: PaperCanvasStore
     
     @Environment(\.adaptiveLayoutContext) private var layout
     @Environment(\.interactionFeedbackCenter) private var feedbackCenter
@@ -19,22 +19,22 @@ struct BottomToolbarView: View {
     private var buttonSpacing: CGFloat {
         switch layout.breakpoint {
         case .expanded:
-            return 28
+            return AppConstants.Spacing.xxl + 4
         case .medium:
-            return 22
+            return AppConstants.Spacing.xl + 2
         case .compact:
-            return 18
+            return AppConstants.Spacing.m + 6
         }
     }
 
     private var containerPadding: CGFloat {
         switch layout.breakpoint {
         case .expanded:
-            return 18
+            return AppConstants.Spacing.m + 6
         case .medium:
-            return 16
+            return AppConstants.Spacing.l
         case .compact:
-            return 14
+            return AppConstants.Spacing.m + 2
         }
     }
 
@@ -74,12 +74,12 @@ struct BottomToolbarView: View {
             .menuStyle(.button)
         }
         .padding(.horizontal, containerPadding)
-        .padding(.vertical, 12)
+        .padding(.vertical, .rpSpaceM)
         .background(
-            RoundedRectangle(cornerRadius: 20, style: .continuous)
+            RoundedRectangle(cornerRadius: .rpCornerXL, style: .continuous)
                 .fill(.regularMaterial)
         )
-        .shadow(color: Color.black.opacity(0.12), radius: 12, y: 4)
+        .shadow(color: ShadowTokens.medium.color, radius: ShadowTokens.medium.radius, x: ShadowTokens.medium.x, y: ShadowTokens.medium.y)
         .photosPicker(isPresented: $isPhotoPickerPresented, selection: $selectedPhotoItem, matching: .images)
         .onChange(of: selectedPhotoItem) { _, item in
             loadPhoto(from: item)
@@ -140,7 +140,7 @@ struct BottomToolbarView: View {
             transform: transform,
             zIndex: Double(canvasStore.objects.count),
             imageData: imageData,
-            cornerRadius: 12
+            cornerRadius: .rpCornerM
         )
         
         canvasStore.addObject(imageObject)
@@ -149,12 +149,12 @@ struct BottomToolbarView: View {
     private func toolbarButton(systemName: String, isActive: Bool = false, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Image(systemName: systemName)
-                .font(.title3.weight(.semibold))
+                .font(Typography.title3)
                 .frame(width: 44, height: 44)
                 .foregroundStyle(isActive ? Color.white : Color.primary)
                 .background(
-                    RoundedRectangle(cornerRadius: 16, style: .continuous)
-                        .fill(isActive ? Color.accentColor : Color.secondary.opacity(0.12))
+                    RoundedRectangle(cornerRadius: .rpCornerL, style: .continuous)
+                        .fill(isActive ? Color.accentColor : Color.secondary.opacity(OpacityTokens.subtle))
                 )
         }
         .buttonStyle(.plain)
@@ -163,12 +163,12 @@ struct BottomToolbarView: View {
 
     private func toolbarLabel(systemName: String) -> some View {
         Image(systemName: systemName)
-            .font(.title3.weight(.semibold))
+            .font(Typography.title3)
             .frame(width: 44, height: 44)
             .foregroundStyle(.primary)
             .background(
-                RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    .fill(Color.secondary.opacity(0.12))
+                RoundedRectangle(cornerRadius: .rpCornerL, style: .continuous)
+                    .fill(Color.secondary.opacity(OpacityTokens.subtle))
             )
     }
 }

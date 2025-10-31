@@ -23,13 +23,15 @@ struct StickerObjectView: View {
             }
         }
         .overlay(
-            RoundedRectangle(cornerRadius: 8)
+            RoundedRectangle(cornerRadius: .rpCornerS)
                 .stroke(
                     isSelected ? Color.accentColor : Color.clear,
                     lineWidth: isSelected ? 3 : 0
                 )
         )
-        .shadow(color: .black.opacity(isSelected ? 0.2 : 0.1), radius: isSelected ? 8 : 4, y: isSelected ? 4 : 2)
+        .shadow(color: ShadowTokens.small.color.opacity(isSelected ? 1.5 : 1.0),
+                radius: isSelected ? ShadowTokens.small.radius * 2 : ShadowTokens.small.radius,
+                y: isSelected ? ShadowTokens.small.y * 2 : ShadowTokens.small.y)
         .scaleEffect(isSelected ? 1.05 : 1.0)
         .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isSelected)
     }

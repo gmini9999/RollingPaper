@@ -37,9 +37,9 @@ struct AdaptiveLayoutContext: Equatable {
 
         let breakpoint: Breakpoint
         switch width {
-        case ..<600:
+        case ..<AppConstants.Breakpoint.medium:
             breakpoint = .compact
-        case 600..<900:
+        case AppConstants.Breakpoint.medium..<AppConstants.Breakpoint.expanded:
             breakpoint = .medium
         default:
             breakpoint = .expanded
@@ -52,17 +52,6 @@ struct AdaptiveLayoutContext: Equatable {
             width: width,
             height: height
         )
-    }
-
-    var columnVisibilityPreference: NavigationSplitViewVisibility {
-        switch breakpoint {
-        case .compact:
-            return .detailOnly
-        case .medium:
-            return .doubleColumn
-        case .expanded:
-            return .all
-        }
     }
 }
 
@@ -77,7 +66,7 @@ extension EnvironmentValues {
     }
 }
 
-private struct AdaptiveContentContainerModifier: ViewModifier {
+struct AdaptiveContentContainerModifier: ViewModifier {
     @Environment(\.adaptiveLayoutContext) private var layout
 
     func body(content: Content) -> some View {
@@ -87,17 +76,17 @@ private struct AdaptiveContentContainerModifier: ViewModifier {
 
         switch layout.breakpoint {
         case .compact:
-            horizontalPadding = 16
-            verticalPadding = 20
+            horizontalPadding = AppConstants.ContentPadding.Compact.horizontal
+            verticalPadding = AppConstants.ContentPadding.Compact.vertical
             maxWidth = nil
         case .medium:
-            horizontalPadding = 24
-            verticalPadding = 24
-            maxWidth = 720
+            horizontalPadding = AppConstants.ContentPadding.Medium.horizontal
+            verticalPadding = AppConstants.ContentPadding.Medium.vertical
+            maxWidth = AppConstants.MaxWidth.medium
         case .expanded:
-            horizontalPadding = 32
-            verticalPadding = 32
-            maxWidth = 960
+            horizontalPadding = AppConstants.ContentPadding.Expanded.horizontal
+            verticalPadding = AppConstants.ContentPadding.Expanded.vertical
+            maxWidth = AppConstants.MaxWidth.expanded
         }
 
         return content
@@ -105,12 +94,6 @@ private struct AdaptiveContentContainerModifier: ViewModifier {
             .padding(.vertical, verticalPadding)
             .frame(maxWidth: maxWidth, alignment: .center)
             .frame(maxWidth: .infinity, alignment: .center)
-    }
-}
-
-extension View {
-    func adaptiveContentContainer() -> some View {
-        modifier(AdaptiveContentContainerModifier())
     }
 }
 

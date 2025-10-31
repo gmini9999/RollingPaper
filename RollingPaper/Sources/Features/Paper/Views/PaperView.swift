@@ -7,9 +7,9 @@ struct PaperView: View {
 
     @Environment(\.adaptiveLayoutContext) private var layout
 
-    @StateObject private var paperKitState = PaperKitState()
-    @StateObject private var canvasStore = PaperCanvasStore()
-    @StateObject private var gestureManager = GestureCoordinationManager()
+    @State private var paperKitState = PaperKitState()
+    @State private var canvasStore = PaperCanvasStore()
+    @State private var gestureManager = GestureCoordinationManager()
 
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -17,8 +17,8 @@ struct PaperView: View {
                 .ignoresSafeArea()
 
             CustomObjectsOverlay(objects: canvasStore.objects)
-                .environmentObject(canvasStore)
-                .environmentObject(gestureManager)
+                .environment(canvasStore)
+                .environment(gestureManager)
                 .ignoresSafeArea()
         }
         .navigationTitle(editorTitle)
@@ -28,7 +28,7 @@ struct PaperView: View {
                 if let id = paperID {
                     Button(action: { onShare?(id) }) {
                         Image(systemName: "square.and.arrow.up")
-                            .font(.title3.weight(.semibold))
+                            .font(Typography.title3)
                     }
                     .buttonStyle(.plain)
                     .foregroundStyle(.tint)
@@ -37,14 +37,14 @@ struct PaperView: View {
             }
         }
         .toolbarBackground(.regularMaterial, for: .navigationBar)
-        .environmentObject(gestureManager)
+        .environment(gestureManager)
         .safeAreaInset(edge: .bottom, spacing: 0) {
             BottomToolbarView(
                 paperKitState: paperKitState,
                 canvasStore: canvasStore
             )
             .padding(.horizontal, bottomToolbarHorizontalPadding)
-            .padding(.top, 12)
+            .padding(.top, .rpSpaceM)
         }
         .onAppear {
             gestureManager.prepareHapticEngine()
@@ -63,19 +63,19 @@ private extension PaperView {
     var bottomToolbarHorizontalPadding: CGFloat {
         switch layout.breakpoint {
         case .expanded:
-            return 32
+            return .rpSpaceXXXL
         case .medium:
-            return 24
+            return .rpSpaceXXL
         case .compact:
-            return 20
+            return .rpSpaceXL
         }
     }
 }
 
 #Preview("Paper Editor – Create") {
-    return PaperView(paperID: nil)
+    PaperView(paperID: nil)
         .environment(\.adaptiveLayoutContext, .fallback)
-        .environmentObject(AppNavigator())
+        .environment(AppNavigator())
         .interactionFeedbackCenter(InteractionFeedbackCenter.shared)
 }
 
@@ -87,8 +87,8 @@ private extension PaperView {
         width: 1180,
         height: 820
     )
-    return PaperView(paperID: UUID())
+    PaperView(paperID: UUID())
         .environment(\.adaptiveLayoutContext, expanded)
-        .environmentObject(AppNavigator())
+        .environment(AppNavigator())
         .interactionFeedbackCenter(InteractionFeedbackCenter.shared)
 }

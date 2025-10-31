@@ -4,19 +4,19 @@ struct AudioRecorderSheet: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.interactionFeedbackCenter) private var feedbackCenter
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @ObservedObject var store: PaperCanvasStore
-    @StateObject private var viewModel = AudioRecordingViewModel()
+    var store: PaperCanvasStore
+    @State private var viewModel = AudioRecordingViewModel()
     
     var body: some View {
         NavigationStack {
-            VStack(spacing: 32) {
-                Spacer(minLength: 12)
+            VStack(spacing: .rpSpaceXXXL) {
+                Spacer(minLength: .rpSpaceM)
                 waveformView
                 durationView
                 recordingControls
-                Spacer(minLength: 12)
+                Spacer(minLength: .rpSpaceM)
             }
-            .padding(.horizontal, SheetStyleGuide.Layout.horizontalPadding)
+            .padding(.horizontal, .rpSpaceXXL)
             .padding(.vertical, .rpSpaceXL)
             .navigationTitle("음성 메모")
             .navigationBarTitleDisplayMode(.inline)
@@ -24,33 +24,33 @@ struct AudioRecorderSheet: View {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("취소") {
                         viewModel.resetRecording()
-                        SheetStyleGuide.Haptics.trigger(.cancel, reduceMotion: reduceMotion, feedbackCenter: feedbackCenter)
+                        feedbackCenter.trigger(haptic: .selection, animation: .subtle, reduceMotion: reduceMotion)
                         dismiss()
                     }
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("추가") {
-                        SheetStyleGuide.Haptics.trigger(.confirm, reduceMotion: reduceMotion, feedbackCenter: feedbackCenter)
+                        feedbackCenter.trigger(haptic: .selection, animation: .subtle, reduceMotion: reduceMotion)
                         addVoiceObject()
                     }
                     .disabled(!viewModel.hasRecording)
                 }
             }
         }
-        .rpNavigationChrome()
-        .rpBackground()
-        .sheetChrome()
+        .background(Color(.systemGroupedBackground))
     }
     
     private var waveformView: some View {
-        WaveformView(samples: viewModel.levelSamples, color: .accentColor)
+        Rectangle()
+            .fill(.ultraThinMaterial)
             .frame(height: 140)
-            .padding()
-            .background(
-                RoundedRectangle(cornerRadius: 28, style: .continuous)
-                    .fill(.ultraThinMaterial)
-                    .shadow(color: .black.opacity(0.1), radius: 10, y: 6)
-            )
+            .overlay {
+                Image(systemName: "waveform")
+                    .font(.system(size: 48))
+                    .foregroundStyle(Color.accentColor)
+            }
+            .cornerRadius(.rpCornerXL + 8)
+            .shadow(color: ShadowTokens.medium.color, radius: ShadowTokens.medium.radius * 1.25, y: ShadowTokens.medium.y * 1.5)
     }
     
     private var durationView: some View {
@@ -60,9 +60,8 @@ struct AudioRecorderSheet: View {
     }
     
     private var recordingControls: some View {
-        HStack(spacing: 32) {
+        HStack(spacing: .rpSpaceXXXL) {
             if viewModel.hasRecording {
-                // Play/Pause button
                 Button {
                     viewModel.togglePlayback()
                 } label: {
@@ -72,7 +71,6 @@ struct AudioRecorderSheet: View {
                 }
                 .buttonStyle(.plain)
                 
-                // Delete button
                 Button {
                     viewModel.resetRecording()
                 } label: {
@@ -82,7 +80,6 @@ struct AudioRecorderSheet: View {
                 }
                 .buttonStyle(.plain)
             } else {
-                // Record button
                 Button {
                     viewModel.toggleRecording()
                 } label: {

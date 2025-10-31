@@ -18,12 +18,12 @@ struct LaunchView: View {
                     .frame(height: metrics.heroHeight)
                     .accessibilityHidden(true)
 
-                VStack(spacing: 12) {
+                VStack(spacing: .rpSpaceM) {
                     Text("RollingPaper")
-                        .font(isExpanded ? .largeTitle.weight(.semibold) : .title2.weight(.semibold))
+                        .font(isExpanded ? Typography.largeTitle : Typography.title2)
 
                     Text("Loading your papers…")
-                        .font(.body)
+                        .font(Typography.body)
                         .foregroundStyle(.secondary)
                         .multilineTextAlignment(.center)
                         .accessibilityLabel("앱 환경을 불러오는 중")
@@ -53,7 +53,7 @@ struct LaunchView: View {
         let primary = Color.accentColor
         let background = Color(.systemBackground)
         let colors: [Color] = colorScheme == .dark
-            ? [background, primary.opacity(0.25)]
+            ? [background, primary.opacity(OpacityTokens.light)]
             : [primary.opacity(0.22), background]
 
         return LinearGradient(colors: colors, startPoint: .topLeading, endPoint: .bottomTrailing)
@@ -196,16 +196,13 @@ private struct LaunchHeroView: View {
 
 #Preview("Launch – Compact") {
     LaunchView()
-        .previewInterfaceOrientation(.portrait)
 }
 
 #Preview("Launch – Expanded") {
     LaunchView()
-        .previewInterfaceOrientation(.landscapeRight)
 }
 
 #Preview("Launch – Reduce Motion Dark") {
     LaunchView()
-        .environment(\.accessibilityReduceMotion, true)
         .preferredColorScheme(.dark)
 }

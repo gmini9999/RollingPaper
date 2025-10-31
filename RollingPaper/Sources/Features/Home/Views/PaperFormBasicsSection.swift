@@ -43,7 +43,7 @@ struct PaperFormBasicsSection: View {
                 .accessibilityHint("Paper 제목은 최대 60자까지 입력할 수 있습니다.")
 
             if !draft.isTitleValid {
-                Text(draft.titleErrorMessage)
+                Text(draft.titleErrorMessage ?? "")
                     .font(.caption)
                     .foregroundStyle(.red)
             }

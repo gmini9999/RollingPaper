@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct AuthFlowStatusView: View {
-    @ObservedObject var viewModel: AuthViewModel
+    var viewModel: AuthViewModel
     var onRetry: ((AuthProvider) -> Void)?
     var onDismissError: (() -> Void)?
     var onSuccess: (() -> Void)?
@@ -20,8 +20,8 @@ struct AuthFlowStatusView: View {
             }
         }
         .frame(maxWidth: .infinity)
-        .onChange(of: viewModel.feedback) { _, feedback in
-            guard let feedback else { return }
+        .onChange(of: viewModel.feedback) { oldValue, newValue in
+            guard let feedback = newValue else { return }
             present(feedback)
         }
         .alert(item: $alertContent) { content in
@@ -42,13 +42,13 @@ struct AuthFlowStatusView: View {
         case .failure:
             if case .failure(let provider, _) = viewModel.state {
                 alertContent = AlertContent(
-                    title: feedback.title,
+                    title: feedback.title ?? "",
                     message: feedback.message,
                     retryProvider: provider
                 )
             } else {
                 alertContent = AlertContent(
-                    title: feedback.title,
+                    title: feedback.title ?? "",
                     message: feedback.message,
                     retryProvider: nil
                 )
@@ -130,7 +130,7 @@ struct AuthFlowStatusView: View {
                 onDismissError?()
             }
             .buttonStyle(.plain)
-            .foregroundStyle(.accentColor)
+            .foregroundStyle(Color.accentColor)
             .disabled(viewModel.isProcessing)
             .accessibilityHint("오류 메시지를 닫습니다")
         }

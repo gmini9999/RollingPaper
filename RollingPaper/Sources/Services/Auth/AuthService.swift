@@ -1,9 +1,7 @@
-import Combine
 import Foundation
 
 protocol AuthService: AnyObject {
-    var currentSession: UserSession? { get }
-    var sessionPublisher: AnyPublisher<UserSession?, Never> { get }
+    var currentSession: UserSession? { get async }
 
     @discardableResult
     func signIn(with provider: AuthProvider) async throws -> UserSession

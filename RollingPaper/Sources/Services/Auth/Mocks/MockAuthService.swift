@@ -1,4 +1,3 @@
-import Combine
 import Foundation
 
 struct MockAuthServiceConfiguration: Sendable {
@@ -20,13 +19,10 @@ struct MockAuthServiceConfiguration: Sendable {
 
 @MainActor
 final class MockAuthService: AuthService {
+    private var session: UserSession?
 
-    @Published private var session: UserSession?
-
-    var currentSession: UserSession? { session }
-
-    var sessionPublisher: AnyPublisher<UserSession?, Never> {
-        $session.eraseToAnyPublisher()
+    var currentSession: UserSession? {
+        get async { session }
     }
 
     private let configuration: MockAuthServiceConfiguration
@@ -38,7 +34,7 @@ final class MockAuthService: AuthService {
         let resolvedPersistence = persistence ?? UserDefaultsSessionPersistence()
         self.configuration = resolvedConfig
         self.persistence = resolvedPersistence
-        self._session = Published(initialValue: resolvedPersistence.loadSession())
+        self.session = resolvedPersistence.loadSession()
     }
 
     @discardableResult

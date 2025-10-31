@@ -5,7 +5,7 @@ struct VoiceObjectView: View {
     let isSelected: Bool
     
     var body: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: .rpSpaceS) {
             Image(systemName: "waveform.circle.fill")
                 .font(.system(size: 36))
                 .foregroundStyle(
@@ -17,17 +17,19 @@ struct VoiceObjectView: View {
                 )
             
             Text(formatTime(object.duration))
-                .font(.caption.monospacedDigit())
+                .font(Typography.caption.monospacedDigit())
                 .foregroundStyle(.secondary)
         }
-        .padding(16)
+        .padding(.rpSpaceL)
         .background(
-            RoundedRectangle(cornerRadius: 18, style: .continuous)
+            RoundedRectangle(cornerRadius: .rpCornerM + 6, style: .continuous)
                 .fill(.regularMaterial)
         )
-        .shadow(color: Color.black.opacity(0.12), radius: isSelected ? 12 : 6, y: isSelected ? 5 : 2)
+        .shadow(color: ShadowTokens.medium.color,
+                radius: isSelected ? ShadowTokens.medium.radius * 2 : ShadowTokens.medium.radius,
+                y: isSelected ? ShadowTokens.medium.y * 2.5 : ShadowTokens.medium.y)
         .overlay(
-            RoundedRectangle(cornerRadius: 18)
+            RoundedRectangle(cornerRadius: .rpCornerM + 6)
                 .stroke(
                     isSelected ? Color.accentColor : Color.clear,
                     lineWidth: isSelected ? 3 : 0
